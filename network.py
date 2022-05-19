@@ -32,8 +32,6 @@ class Network():
 def main():
     net = Network()
     pr_pr = Read().mat_protein_protein()
-
-
     stack =net.pandas_mat_2_stack(pr_pr)
     graph = net.stack_2_graph(stack)
     net.plot_graph(graph,stack)
