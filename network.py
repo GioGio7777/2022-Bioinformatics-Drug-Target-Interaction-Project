@@ -9,10 +9,8 @@ class Network():
         stack = dataframe.stack()
         stack1 = stack[stack >= 1].rename_axis(
             ('source', 'target')).reset_index(name='weight')
-        stack2 = stack[stack == 0].rename_axis(
-            ('source', 'target')).reset_index(name='weight')
-        all_stack = pd.concat([stack1, stack2])
-        return all_stack
+
+        return stack1
 
     def stack_2_graph(init, stack):
         graph = nx.from_pandas_edgelist(

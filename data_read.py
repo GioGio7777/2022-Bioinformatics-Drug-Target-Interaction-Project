@@ -14,8 +14,8 @@ class Read():
     def drug_with_names_read(init):
         return pd.read_csv("data/drug_dict_map.txt", header=None)
 
-    def disase_read(init):
-        return pd.read_csv("data/disease.txt", header=None, names=["Disease"])
+    def disease_read(init):
+        return pd.read_csv("data/disease.txt", sep="|", header=None, names=["Disease"])
 
     def side_effects(init):
         return pd.read_csv("data/se.txt", header=None, names=["SideEffect"])
@@ -40,15 +40,16 @@ class Read():
     def mat_protein_disease(init):
         pr_dis = pd.read_csv(
             "data/mat_protein_disease.txt", sep=" ", header=None)
-        pr_dis.columns = init.disase_read()["Disease"].tolist()
+        pr_dis.columns = init.disease_read()["Disease"].tolist()
         pr_dis["Protein"] = init.protein_read().Protein.tolist()
         pr_dis.set_index("Protein", inplace=True)
         pr_dis.reset_index(drop=True)
         return pr_dis
 
     def mat_drug_disease(init):
-        dr_dis = pd.read_csv("data/mat_drug_disease.txt", sep=" ", header=None)
-        dr_dis.columns = init.disase_read()["Disease"].tolist()
+        dr_dis = pd.read_csv("data/mat_drug_disease.txt",
+                             sep=" ", header=None, on_bad_lines="skip")
+        dr_dis.columns = init.disease_read()["Disease"].tolist()
         dr_dis["Drug"] = init.drug_read().Drug.tolist()
         dr_dis.set_index("Drug", inplace=True)
         dr_dis.reset_index(drop=True)
@@ -95,3 +96,13 @@ class Read():
         pr_sm.set_index("Protein", inplace=True)
         pr_sm.reset_index(drop=True)
         return pr_sm
+
+
+def main():
+    pds = Read().mat_drug_disease()
+
+    print(pds)
+
+
+if __name__ == "__main__":
+    main()

@@ -7,6 +7,7 @@ class NodeVec:
         node2vec = Node2Vec(graph,dimensions = 64,walk_length=800,num_walks = 10,weight_key="weight")
         model = node2vec.fit(batch_words=32)  
         model.save(save_name)
+        return model
 
     def returnSimilars(init,model,value):
         return model.wv.most_similar(value)
@@ -15,8 +16,8 @@ class NodeVec:
 
     def printElements(init,output,item):
         elements = []
-        for a in x:
-            if a[0][0:2] == item:
+        for a in output:
+            if a[0][0:2] != item:
                 elements.append(a)
         return elements
 
