@@ -12,6 +12,9 @@ class NodeVec:
     def returnSimilars(init,model,value):
         return model.wv.most_similar(value)
 
+    def get_model(init,model_name):
+        model = "./models/" + model_name
+        return Word2Vec.load(model)
 
 
     def printElements(init,output,item):
