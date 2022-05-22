@@ -42,7 +42,6 @@ class Streamlit:
         read = Read()
         return read.mat_drug_disease()
 
-    @st.cache()
     def plot_graph(init, table):
         network = Network()
         stack = network.pandas_mat_2_stack(table)
@@ -51,12 +50,12 @@ class Streamlit:
         fig, ax = plt.subplots(figsize=(100, 50))
         pos = nx.spring_layout(graph)
         nx.draw_networkx_nodes(graph, pos,
-                               cmap=plt.get_cmap("jet"),
+                               cmap=plt.get_cmap("viridis"),
                                node_size=7000)
         nx.draw_networkx_labels(graph, pos)
         nx.draw_networkx_edges(graph, pos, edge_color="r", arrows=True)
 
-        return fig, graph
+        return fig
 
     def printElements(init, output, item, item2=""):
         elements = []
@@ -90,15 +89,14 @@ class Streamlit:
 
             st.header("Protein-Protein Interaction")
             tablepr = init.table_protein()
+            with st.container():
+                if st.button("Show Graph"):
+                    st.subheader("Graph Of Table")
+                    with st.spinner(text='In progress'):
+                        fig_prpr = init.plot_graph(tablepr)
+                        st.pyplot(fig_prpr)
+                        st.success("Graph is done")
 
-            if st.button("Show Graph"):
-                st.subheader("Graph Of Table")
-                with st.spinner(text='In progress'):
-                    fig_prpr = init.plot_graph(tablepr)
-                    st.pyplot(fig_prpr)
-                    st.success("Graph is done")
-
-                    
             model_prpr = NodeVec().get_model("pr_pr.model")
 
             st.subheader("Interaction output")
@@ -118,10 +116,10 @@ class Streamlit:
             with st.container():
                 st.subheader("Table")
                 st.dataframe(tablepr_dr)
-                col1,col2 = st.columns([3,1])
-                col2.download_button(label = "Download Table",
-                                     data = tablepr_dr.to_csv().encode("utf-8"),
-                                     file_name = "table_pr_dr.csv")
+                col1, col2 = st.columns([3, 1])
+                col2.download_button(label="Download Table",
+                                     data=tablepr_dr.to_csv().encode("utf-8"),
+                                     file_name="table_pr_dr.csv")
 
             st.empty()
             with st.container():
@@ -141,7 +139,8 @@ class Streamlit:
 
                     if len(protein_name) != 0:
                         values_prdr = NodeVec().returnSimilars(model_prdr, protein_name)
-                        elements_pr_dr = init.printElements(values_prdr, "P", item2="Q")
+                        elements_pr_dr = init.printElements(
+                            values_prdr, "P", item2="Q")
                         st.table(elements_pr_dr)
                 except:
                     st.error("Error No Drug Found")
@@ -152,13 +151,13 @@ class Streamlit:
             table_prdi = init.table_dr_di()
 
             st.subheader("Table")
-            with st.columns():
+            with st.container():
                 st.dataframe(table_prdi)
-                col1,col2 = st.columns([3,1])
-                col2.download_button(label = "Download Table",
-                                     data = table_prdi.to_csv().encode("utf-8"),
-                                     file_name = "table_pr_dr.csv")
-            with st.columns():
+                col1, col2 = st.columns([3, 1])
+                col2.download_button(label="Download Table",
+                                     data=table_prdi.to_csv().encode("utf-8"),
+                                     file_name="table_pr_dis.csv")
+            with st.container():
                 if st.button("Show Graph"):
                     st.subheader("Graph Of Table")
                     with st.spinner(text='In progress'):
@@ -169,44 +168,54 @@ class Streamlit:
             model_prdi = NodeVec().get_model("pr_dis.model")
 
             st.subheader("Interaction output")
-            try:
-                protein_name = st.text_input("Enter protein")
 
-                if len(protein_name) != 0:
-                    values_prdi = NodeVec().returnSimilars(model_prdi, protein_name)
-                    elements_pr_di = init.printElements(
-                        values_prdi, "P", item2="Q")
-                    st.table(elements_pr_di)
-            except:
-                st.error("Error No Disease Found")
+            with st.container():
+                try:
+                    protein_name = st.text_input("Enter protein")
+
+                    if len(protein_name) != 0:
+                        values_prdi = NodeVec().returnSimilars(model_prdi, protein_name)
+                        elements_pr_di = init.printElements(
+                            values_prdi, "P", item2="Q")
+                        st.table(elements_pr_di)
+                except:
+                    st.error("Error No Disease Found")
 
         elif choice == "Drug-Disease Interaction":
 
             st.header("Drug-Disease Interaction")
             table_drdi = init.table_dr_di()
 
-            st.subheader("Table")
-            st.dataframe(table_drdi)
+            with st.container():
+                st.subheader("Table")
+                st.dataframe(table_drdi)
+                col1, col2 = st.columns([3, 1])
+                col2.download_button(label="Download Table",
+                                     data=table_drdi.to_csv().encode("utf-8"),
+                                     file_name="table_dr_dis.csv")
 
-            if st.button("Show Graph"):
-                st.subheader("Graph Of Table")
-                with st.spinner(text='In progress'):
-                    fig_prdr = init.plot_graph(table_drdi)
-                    st.pyplot(fig_prdr)
-                    st.success("Graph is done")
+            with st.container():
+                if st.button("Show Graph"):
+                    st.subheader("Graph Of Table")
+                    with st.spinner(text='In progress'):
+                        fig_prdr = init.plot_graph(table_drdi)
+                        st.pyplot(fig_prdr)
+                        st.success("Graph is done")
 
             model_drdis = NodeVec().get_model("dr_dis.model")
 
             st.subheader("Interaction output")
-            try:
-                drug_name = st.text_input("Enter Drug")
+            with st.container():
+                try:
+                    drug_name = st.text_input("Enter Drug")
 
-                if len(protein_name) != 0:
-                    values_drdis = NodeVec().returnSimilars(model_drdis, protein_name)
-                    elements_dr_dis = init.printElements2(values_drdis, "DB")
-                    st.table(elements_dr_dis)
-            except:
-                st.error("Error No Disease Found")
+                    if len(protein_name) != 0:
+                        values_drdis = NodeVec().returnSimilars(model_drdis, protein_name)
+                        elements_dr_dis = init.printElements2(
+                            values_drdis, "DB")
+                        st.table(elements_dr_dis)
+                except:
+                    st.error("Error No Disease Found")
 
         elif choice == "Drug-Drug Interaction":
 
@@ -214,77 +223,94 @@ class Streamlit:
             table_drdr = init.table_dr_dr()
 
             st.subheader("Table")
-            st.dataframe(table_drdr)
+            with st.container():
+                st.dataframe(table_drdr)
+                col1, col2 = st.columns([3, 1])
+                col2.download_button(label="Download Table",
+                                     data=table_drdr.to_csv().encode("utf-8"),
+                                     file_name="table_dr_dr.csv")
 
-            if st.button("Show Graph"):
-                st.subheader("Graph Of Table")
-                with st.spinner(text='In progress'):
-                    fig_prdr = init.plot_graph(table_drdr)
-                    st.pyplot(fig_prdr)
-                    st.success("Graph is done")
+            with st.container():
+                if st.button("Show Graph"):
+                    st.subheader("Graph Of Table")
+                    with st.spinner(text='In progress'):
+                        fig_prdr = init.plot_graph(table_drdr)
+                        st.pyplot(fig_prdr)
+                        st.success("Graph is done")
 
             model_drdr = NodeVec().get_model("dr_dr.model")
 
             st.subheader("Interaction output")
-            try:
-                drug_name = st.text_input("Enter Drug")
+            with st.container():
+                try:
+                    drug_name = st.text_input("Enter Drug")
 
-                if len(drug_name) != 0:
-                    values_drdr = NodeVec().returnSimilars(model_drdr, drug_name)
-                    st.table(values_drdr)
-            except:
-                st.error("Error No Protein Found")
+                    if len(drug_name) != 0:
+                        values_drdr = NodeVec().returnSimilars(model_drdr, drug_name)
+                        st.table(values_drdr)
+                except:
+                    st.error("Error No Protein Found")
 
         elif choice == "Drug-Protein Interaction":
             st.header("Drug-Protein Interaction")
             table_drpr = init.table_dr_pr()
 
-            if st.button("Show Graph"):
-                st.subheader("Graph Of Table")
-                with st.spinner(text='In progress'):
-                    fig_prdr = init.plot_graph(table_drpr)
-                    st.pyplot(fig_prdr)
-                    st.success("Graph is done")
+            with st.container():
+                if st.button("Show Graph"):
+                    st.subheader("Graph Of Table")
+                    with st.spinner(text='In progress'):
+                        fig_prdr = init.plot_graph(table_drpr)
+                        st.pyplot(fig_prdr)
+                        st.success("Graph is done")
 
             model_drpr = NodeVec().get_model("dr_pr.model")
 
             st.subheader("Interaction output")
-            try:
-                drug_name = st.text_input("Enter drug")
+            with st.container():
+                try:
+                    drug_name = st.text_input("Enter drug")
 
-                if len(drug_name) != 0:
-                    values_drpr = NodeVec().returnSimilars(model_drpr, drug_name)
-                    elements_dr_pr = init.printElements2(values_drpr, "DB")
-                    st.table(elements_dr_pr)
-            except:
-                st.error("Error No Protein Found")
+                    if len(drug_name) != 0:
+                        values_drpr = NodeVec().returnSimilars(model_drpr, drug_name)
+                        elements_dr_pr = init.printElements2(values_drpr, "DB")
+                        st.table(elements_dr_pr)
+                except:
+                    st.error("Error No Protein Found")
 
         else:
             st.header("Drug-Side Effect Interaction")
             table_drse = init.table_dr_se()
 
             st.subheader("Table")
-            st.dataframe(table_drse)
+            with st.container():
+                st.dataframe(table_drse)
+                col1, col2 = st.columns([3, 1])
+                col2.download_button(label="Download Table",
+                                     data=table_drse.to_csv().encode("utf-8"),
+                                     file_name="table_dr_se.csv")
 
-            if st.button("Show Graph"):
-                st.subheader("Graph Of Table")
-                with st.spinner(text='In progress'):
-                    fig_prdr = init.plot_graph(table_drse)
-                    st.pyplot(fig_prdr)
-                    st.success("Graph is done")
+            with st.container():
+                if st.button("Show Graph"):
+                    st.subheader("Graph Of Table")
+                    with st.spinner(text='In progress'):
+                        fig_prdr = init.plot_graph(table_drse)
+                        st.pyplot(fig_prdr)
+                        st.success("Graph is done")
 
             model_drdis = NodeVec().get_model("dr_dis.model")
 
             st.subheader("Interaction output")
-            try:
-                drug_name = st.text_input("Enter drug")
+            with st.container():
+                try:
+                    drug_name = st.text_input("Enter drug")
 
-                if len(drug_name) != 0:
-                    values_drdis = NodeVec().returnSimilars(model_drdis, protein_name)
-                    elements_dr_dis = init.printElements2(values_drdis, "DB")
-                    st.table(elements_dr_dis)
-            except:
-                st.error("Error No Protein Found")
+                    if len(drug_name) != 0:
+                        values_drdis = NodeVec().returnSimilars(model_drdis, protein_name)
+                        elements_dr_dis = init.printElements2(
+                            values_drdis, "DB")
+                        st.table(elements_dr_dis)
+                except:
+                    st.error("Error No Protein Found")
 
 
 def main():
