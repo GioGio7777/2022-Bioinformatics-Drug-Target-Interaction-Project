@@ -73,7 +73,7 @@ class Streamlit:
 
     def streamlit(init):
         network = Network()
-        st.title("Bionfo Project")
+        st.title("Introduction to Bioinformatics Project")
 
         menus = ["Protein-Protein Interaction",
                  "Protein-Drug Interaction",
