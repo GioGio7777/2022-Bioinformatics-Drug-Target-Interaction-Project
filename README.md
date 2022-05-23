@@ -9,6 +9,7 @@ Yusuf Çelik
 
 ## 2. Libraries:
 - [node2vec](https://github.com/eliorc/node2vec)
+- Word2Vec
 - gensim
 - matplotlib
 - pandas 
