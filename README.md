@@ -2,9 +2,9 @@
 
 ## 1. Group Members
 ```
-Mustafa Onur Başer
-Mustafa Kaplan
-Yusuf Çelik
+Mustafa Onur Başer - 20170808008
+Mustafa Kaplan - 20160808050
+Yusuf Çelik - 20180808006
 ```
 
 ## 2. Libraries:
